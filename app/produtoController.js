@@ -1,15 +1,34 @@
 angular.module('app')
-        .controller('productsController', function ($scope) {
+        .controller('productsController', function ($scope, $http) {
+            var baseUrl = 'http://homestead.test/api/products'
             $scope.app = "Tabela de produtos";
-            $scope.lastID = 0;
+            
+            $scope.produtos = [];
 
-            $scope.produtos = [
-                { id: 1, nome: 'Garrafa', descricao: 'Garrafa tupperware' },
-                { id: 2, nome: 'Caderno', descricao: 'Caderno da escola' },
-                { id: 3, nome: 'Lâmpada', descricao: 'Lâmpada 18w' },
-                { id: 4, nome: 'Violão', descricao: 'Violão tagima' },
-                { id: 5, nome: 'Cadeira', descricao: 'Cadeira gamer Dt3' },
-            ];
+            $scope.getAllProdutos = function () {
+                $http.get(baseUrl)
+                    .then(function (response) {
+                        $scope.produtos = response.data['data'];
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            }
+
+            $scope.getAllProdutos();
+
+            $scope.viewProduto = function (produto) {
+                let id = produto.id;
+
+                $http.get(baseUrl + '/'+id)
+                    .then(function (response) {
+                        $scope.produto = response.data['data'];
+                    })
+                    .catch(function (err) {
+                        console.log(err); 
+                    });
+            }
+
 
             $scope.addProdutos = function (produto) {
                 if($scope.isExist(produto)) {
@@ -45,10 +64,6 @@ angular.module('app')
                 $scope.produtos.splice(position, 1);
                 return true;
             };
-
-            $scope.viewProduto = function (produto) {
-                // TO DO
-            }
 
             $scope.isExist = function (produto) {
                 let i;

@@ -53,7 +53,7 @@
                         <td>{{produto.nome}}</td>
                         <td>{{produto.descricao}}</td>
                         <td>
-                            <a href="#" class="btn btn-default" ng-click="viewProduto(produto)">
+                            <a href="#" class="btn btn-default" ng-click="viewProduto(produto)" data-toggle="modal" data-target="#produtoModal">
                                 <i class="fas fa-eye"></i>
                             </a>
                             <a href="#" class="btn btn-primary" ng-click="editProdutos(produto)">
@@ -72,6 +72,31 @@
             <button class="btn btn-primary btn-block" ng-click="limpar(produto)">Limpar</button>
         </div>
     </div>
+
+    <!-- Modal produto -->
+    <div class="modal fade" id="produtoModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Produto - {{ produto.id }}</h4>
+                </div>
+                <div class="modal-body">
+                    {{ produto.nome }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
