@@ -1,3 +1,3 @@
-#### To view this app, open the index.html inside a **dist** folder.
+#### To view this app, open the index.html inside a **bin** folder.
 
 Thanks :).
