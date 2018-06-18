@@ -5,18 +5,39 @@ angular.module('app')
 
             $scope.produtos = [];
 
+            $scope.query = '';
+
             $scope.produto = {
                 nome: '', descricao: '', valor_compra: '', valor_revenda: '', ativo: '', imagem_url: ''
             };
 
-            $scope.getAllProdutos = function () {
-                $http.get(baseUrl)
+            $scope.prevPage = '';
+            $scope.nextPage = '';
+
+            $scope.getAllProdutos = function (endpoint = null) {
+                let url = baseUrl;
+                
+                if(endpoint != null) {
+                    url = endpoint
+                }
+
+                $http.get(url)
                     .then(function (response) {
                         $scope.produtos = response.data['data'];
+                        $scope.prevPage = response.data['links'].prev;
+                        $scope.nextPage = response.data['links'].next;
                     })
                     .catch(function (err) {
                         console.log(err);
                     });
+            }
+
+            $scope.goPrevious = function () {
+                $scope.getAllProdutos($scope.prevPage);
+            }
+
+            $scope.goNext = function () {
+                $scope.getAllProdutos($scope.nextPage);
             }
 
             $scope.viewProduto = function (produto) {
@@ -31,6 +52,14 @@ angular.module('app')
                     });
             }
 
+            $scope.dispacthProduto = function (produto) {
+                if(produto.id !== ''){
+                    $scope.editProduto(produto);
+                    return;
+                }
+
+                $scope.addProdutos(produto);
+            }
 
             $scope.addProdutos = function (produto) {
                 
@@ -45,13 +74,17 @@ angular.module('app')
             };
 
             $scope.editProduto = function (produto) {
-                if(! $scope.isExist(produto))
-                    return false;
-
-                let position = $scope.getPositionByID(produto.id);
-                $scope.produto = $scope.produtos[position];
+                let id = produto.id;
+                $http.put(baseUrl + '/' + id, produto)
+                    .then(function (response) {
+                        console.log(response);
+                        $scope.getAllProdutos();
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
             }
-            
+
             $scope.deleteProduto = function (produto) {
                 let id = produto.id;
                 $http.delete(baseUrl + '/' + id)
@@ -63,27 +96,12 @@ angular.module('app')
                         });
             };
 
-            $scope.isExist = function (produto) {
-                let i;
-                for (let i = 0; i < $scope.produtos.length; i++) {
-                    if($scope.produtos[i].id == produto.id)
-                        return true;
-                }
-
-                return false;
-            }
-
-            $scope.getPositionByID = function (id) {
-                for (let i = 0; i < $scope.produtos.length; i++) {
-                    if(id == $scope.produtos[i].id)
-                        return i;
-                }
-                
-                return null;
-            }
-
             $scope.limpar = function () {
                 delete $scope.produto; 
+            }
+
+            $scope.launchProdutoEdit = function (produto) {
+                $scope.produtoEdit = produto;
             }
 
             $scope.getAllProdutos();

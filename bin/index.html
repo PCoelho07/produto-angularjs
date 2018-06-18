@@ -19,7 +19,7 @@
 
     <style>
         .jumbotron {
-            width: 600px;
+            width: 700px;
             text-align: center;
             margin-top: 20px;
             margin-left: auto;
@@ -44,8 +44,26 @@
                     Adicionar
                 </button>
             </p>
-            <input type="text" class="form-control" placeholder="O que queres?"> 
-            <table class="table table-bordered table-hover table-striped">
+            <input type="text" class="form-control" placeholder="O que estás buscando?" ng-model="query"> 
+            <div class="alert alert-warning" ng-if="produtos.length == 0">
+                <strong>Ops</strong>, Não existem produtos cadastrados, ou eles não puderam ser carregados!
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li>
+                        <a href="#" aria-label="Previous" ng-click="goPrevious()">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" aria-label="Next" ng-click="goNext()">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <table class="table table-bordered table-hover table-striped" ng-if="produtos.length > 0">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -54,7 +72,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="produto in produtos">
+                    <tr ng-repeat="produto in produtos | filter:query">
                         <td>{{produto.id}}</td>
                         <td>{{produto.nome}}</td>
                         <td>{{produto.descricao}}</td>
@@ -62,7 +80,7 @@
                             <a href="#" class="btn btn-default" ng-click="viewProduto(produto)" data-toggle="modal" data-target="#produtoModal">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="#" class="btn btn-primary" ng-click="editProduto(produto)">
+                            <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#editModal" ng-click="launchProdutoEdit(produto)">
                                 <i class="fa fa-edit"></i>
                             </a>
                             <a href="#" class="btn btn-danger" ng-click="deleteProduto(produto)">
@@ -105,7 +123,6 @@
                             <input type="file" class="form-control" placeholder="Imagem" data-file="produto.imagem_url">
                         </div>
                     </form>
-                    {{ produto }}
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success " ng-click="addProdutos(produto)">Salvar</button>
@@ -119,7 +136,47 @@
     </div>
     <!-- /.modal -->
 
-
+    <!-- Form edit modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Formulário</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Nome" ng-model="produtoEdit.nome">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Descrição" ng-model="produtoEdit.descricao">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control col-md-6" placeholder="Valor compra" ng-model="produtoEdit.valor_compra">
+                            <input type="text" class="form-control col-md-6" placeholder="Valor revenda" ng-model="produtoEdit.valor_revenda">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Ativo" ng-model="produtoEdit.ativo">
+                        </div>
+                        <div class="form-group">
+                            <input type="file" class="form-control" placeholder="Imagem" data-file="produtoEdit.imagem_url">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success " ng-click="editProduto(produtoEdit)">Salvar</button>
+                    <button class="btn btn-primary " ng-click="limpar(produtoEdit)">Limpar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 
     <!-- Modal produto -->
     <div class="modal fade" id="produtoModal" tabindex="-1" role="dialog">
@@ -132,7 +189,30 @@
                     <h4 class="modal-title">Produto - {{ produtoView.id }}</h4>
                 </div>
                 <div class="modal-body">
-                    {{ produtoView.nome }}
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Valor de compra</th>
+                                <th>Valor de revenda</th>
+                                <th>Ativo do produto</th>
+                                <th>Url da imagem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{produtoView.id}}</td>
+                                <td>{{produtoView.nome}}</td>
+                                <td>{{produtoView.descricao}}</td>
+                                <td>{{ produtoView.valor_compra }}</td>
+                                <td>{{ produtoView.valor_revenda }}</td>
+                                <td>{{ produtoView.ativo }}</td>
+                                <td>{{ produtoView.imagem_url }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
