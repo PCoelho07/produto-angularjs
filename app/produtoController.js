@@ -44,7 +44,7 @@ angular.module('app')
                     });
             };
 
-            $scope.editProdutos = function (produto) {
+            $scope.editProduto = function (produto) {
                 if(! $scope.isExist(produto))
                     return false;
 
@@ -52,15 +52,15 @@ angular.module('app')
                 $scope.produto = $scope.produtos[position];
             }
             
-            $scope.deleteProdutos = function (produto) {
-                if(! $scope.isExist(produto))
-                    return false; 
-                
-                let position = $scope.getPositionByID(produto.id);
-
-                delete $scope.produtos[position];
-                $scope.produtos.splice(position, 1);
-                return true;
+            $scope.deleteProduto = function (produto) {
+                let id = produto.id;
+                $http.delete(baseUrl + '/' + id)
+                        .then(function (response) {
+                            $scope.getAllProdutos();
+                        })
+                        .catch( function (err) {
+                            console.log(err)
+                        });
             };
 
             $scope.isExist = function (produto) {
