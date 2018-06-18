@@ -2,8 +2,12 @@ angular.module('app')
         .controller('productsController', function ($scope, $http) {
             var baseUrl = 'http://homestead.test/api/products'
             $scope.app = "Tabela de produtos";
-            
+
             $scope.produtos = [];
+
+            $scope.produto = {
+                nome: '', descricao: '', valor_compra: '', valor_revenda: '', ativo: '', imagem_url: ''
+            };
 
             $scope.getAllProdutos = function () {
                 $http.get(baseUrl)
@@ -15,14 +19,12 @@ angular.module('app')
                     });
             }
 
-            $scope.getAllProdutos();
-
             $scope.viewProduto = function (produto) {
                 let id = produto.id;
 
                 $http.get(baseUrl + '/'+id)
                     .then(function (response) {
-                        $scope.produto = response.data['data'];
+                        $scope.produtoView = response.data['data'];
                     })
                     .catch(function (err) {
                         console.log(err); 
@@ -31,19 +33,15 @@ angular.module('app')
 
 
             $scope.addProdutos = function (produto) {
-                if($scope.isExist(produto)) {
-                    $scope.editProdutos(produto);
-                    return;
-                }
-
-                if($scope.produtos.length > 0) {
-                    $scope.lastID = $scope.produtos[$scope.produtos.length-1].id;
-                }
-
-                produto.id = $scope.lastID+1;
-                $scope.produtos.push(produto);
-                $scope.lastID = produto.id;
-                delete $scope.produto;
+                
+                $http.post(baseUrl, produto)
+                    .then(function (response) {
+                        console.log(response);
+                        $scope.getAllProdutos();
+                    })
+                    .catch(function (err) {
+                        console.log(err.data);
+                    });
             };
 
             $scope.editProdutos = function (produto) {
@@ -87,5 +85,7 @@ angular.module('app')
             $scope.limpar = function () {
                 delete $scope.produto; 
             }
+
+            $scope.getAllProdutos();
 
         });
